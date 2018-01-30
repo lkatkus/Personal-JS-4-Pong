@@ -48,12 +48,12 @@ function init(){
     }
 
     // PLAYER MOVEMENT CONTROL
-    document.addEventListener('keypress',function(event){
+    document.addEventListener('keydown',function(event){
         let direction;
-        if(event.keyCode == 56){
+        if(event.key == 'ArrowUp'){
             direction = 'up';
             containerArr[0].update(direction);
-        }else if(event.keyCode == 53){
+        }else if(event.key == 'ArrowDown'){
             direction = 'down';
             containerArr[0].update(direction);
         }
@@ -104,13 +104,13 @@ function init(){
 
     function animate(){
         var myAnimationRequest = requestAnimationFrame(animate);
-
-        function stopAnim(){
-            console.log("stop animation");
-            // cancelAnimationFrame(myAnimationRequest);
-        }
-
-        canvas.addEventListener('click',stopAnim);
+        //
+        // function stopAnim(){
+        //     console.log("stop");
+        //     // cancelAnimationFrame(myAnimationRequest);
+        // }
+        //
+        // canvas.addEventListener('click',stopAnim);
 
         // LOOP FOR UPDATING CIRCLE POSITION
         for(var i = 0; i < containerArr.length; i++){
