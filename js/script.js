@@ -48,7 +48,7 @@ function init(){
     }
 
     // PLAYER MOVEMENT CONTROL
-    document.addEventListener('keydown',function(event){
+    document.addEventListener('keydown', function(event){
         let direction;
         if(event.key == 'ArrowUp'){
             direction = 'up';
