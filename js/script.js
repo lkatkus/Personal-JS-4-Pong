@@ -104,8 +104,9 @@ function init(){
             // containerArr[0].update();
             containerArr[i].update();
         }
+        console.log(containerArr[1].x)
     }
-
     animate();
 
+    // INTERACTIVITY WITH PLAYER
 }
