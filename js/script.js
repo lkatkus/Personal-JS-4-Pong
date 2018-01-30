@@ -2,6 +2,7 @@ function init(){
 
     // SELECTORS
     var container = document.querySelector(".container");
+    var p1Score = 0;
     var canvas = document.getElementById("canvas");
     var ctx = canvas.getContext("2d");
 
@@ -38,9 +39,9 @@ function init(){
         this.update = function(direction){
             void ctx.clearRect(0, 0, canvas.width, canvas.height);
             if(direction == 'up'){
-                this.y -= 10;
+                this.y -= 40;
             }else if (direction == 'down'){
-                this.y += 10;
+                this.y += 40;
             }
             this.drawRec();
         }
@@ -82,16 +83,20 @@ function init(){
                 dx = -dx;
             }else if(this.x < 0){
                 dx = -dx;
+                p1Score += 1;
+                document.querySelector("#p1Score").innerHTML = p1Score;
+            }else if(this.x == containerArr[0].x && containerArr[0].y < this.y && containerArr[0].y+100 > this.y){
+                dx = -dx;
             }
+            this.x += dx;
 
             if(this.y > canvas.height){
                 dy = -dy;
             }else if(this.y < 0){
                 dy = -dy;
             };
-
-            this.x += dx;
             this.y += dy;
+
             this.drawBall();
         }
     }
