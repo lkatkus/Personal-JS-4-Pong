@@ -60,7 +60,7 @@ function init(){
     });
 
     // CREATE BALL
-    containerArr.push(new Ball(300,300,10));
+    containerArr.push(new Ball(canvas.width/2,canvas.height/2,10));
 
     function Ball(x,y){
 
@@ -85,7 +85,8 @@ function init(){
                 dx = -dx;
                 p1Score += 1;
                 document.querySelector("#p1Score").innerHTML = p1Score;
-            }else if(this.x == containerArr[0].x && containerArr[0].y < this.y && containerArr[0].y+100 > this.y){
+            }else if(this.x <= containerArr[0].x+10 && containerArr[0].y <= this.y && containerArr[0].y+100 >= this.y){
+                console.log("REBOUND");
                 dx = -dx;
             }
             this.x += dx;
