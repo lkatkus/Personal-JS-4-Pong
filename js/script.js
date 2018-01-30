@@ -103,14 +103,22 @@ function init(){
     }
 
     function animate(){
-        requestAnimationFrame(animate);
+        var myAnimationRequest = requestAnimationFrame(animate);
+
+        function stopAnim(){
+            console.log("stop animation");
+            // cancelAnimationFrame(myAnimationRequest);
+        }
+
+        canvas.addEventListener('click',stopAnim);
 
         // LOOP FOR UPDATING CIRCLE POSITION
         for(var i = 0; i < containerArr.length; i++){
             // containerArr[0].update();
             containerArr[i].update();
-        }
+        };
     }
+
 
     animate();
 
