@@ -98,14 +98,6 @@ function init(){
 
         this.drawPlayer = function(){
             ctx.putImageData(player, this.x, this.y);
-
-            ctx.beginPath();
-            ctx.strokeStyle = 'white';
-            ctx.setLineDash([20,15]);
-            ctx.lineWidth = 5;
-            ctx.moveTo(canvas.width/2, 0);
-            ctx.lineTo(canvas.width/2, canvas.height);
-            ctx.stroke();
         };
 
         // // FOR MOUSE CONTROLS
@@ -133,10 +125,10 @@ function init(){
 
             ctx.beginPath();
             ctx.strokeStyle = 'white';
-            ctx.setLineDash([20,15]);
+            ctx.setLineDash([20,10]);
             ctx.lineWidth = 5;
-            ctx.moveTo(canvas.width/2, 0);
-            ctx.lineTo(canvas.width/2, canvas.height);
+            ctx.moveTo(canvas.width/2, 10);
+            ctx.lineTo(canvas.width/2, canvas.height-10);
             ctx.stroke();
         };
 
