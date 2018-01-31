@@ -58,6 +58,7 @@ function init(){
     });
 
     var ballNewY;
+    var ballDirection = 'right';
 
     // SPRITE PLACEHOLDER
     var containerArr = [];
@@ -132,16 +133,12 @@ function init(){
             ctx.stroke();
         };
 
-        // // FOR MOUSE CONTROLS
         this.update = function(){
-
-            if(ballNewY < this.y){
+            if(ballNewY < this.y  && ballDirection == 'right'){
                 this.y -= computerSpeed;
-            }else{
+            }else if(ballNewY > this.y && ballDirection == 'right'){
                 this.y += computerSpeed;
             }
-
-
             this.drawComputer();
         }
     }
@@ -178,6 +175,7 @@ function init(){
             if(this.x + radius >= canvas.width){
                 dx = -dx;
                 p2Result += 1;
+                ballDirection = 'left';
                 p2Score.innerHTML = p2Result;
             }else if(this.x < 0){
                 // CHANGE BALL DIRECTION
@@ -185,16 +183,16 @@ function init(){
 
                 // ADD PLAYER SCORE
                 p1Result += 1;
+                ballDirection = 'right';
                 p1Score.innerHTML = p1Result;
-
-                // CHANGE RADIUS
-                // radius += 10;
 
                 // ADD GAME RESET ON SCORE
             }else if(this.x - radius <= containerArr[0].x + p1Width && containerArr[0].y <= this.y + radius && containerArr[0].y + p1Height >= this.y - radius){
                 dx = -dx;
+                ballDirection = 'right';
             }else if(this.x - radius >= containerArr[1].x  && containerArr[1].y <= this.y + radius && containerArr[1].y + p1Height >= this.y - radius){
                 dx = -dx;
+                ballDirection = 'left';
             }
 
             this.x += dx;
