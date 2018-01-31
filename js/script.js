@@ -28,6 +28,7 @@ function init(){
     function startGame(state){
         if(state == 'start'){
             btnStart.classList.add('d-none');
+            canvas.classList.add('d-cursor-none');
             // btnReset.classList.remove('d-none');
             p1Score.classList.remove('d-none');
             p2Score.classList.remove('d-none');
@@ -56,23 +57,29 @@ function init(){
         mouseNewY = event.y - this.offsetTop;
     });
 
+    var ballNewY;
+
     // SPRITE PLACEHOLDER
     var containerArr = [];
     var player = new Image();
+    var computer = new Image();
 
     // PLAYER VARIABLES
     // PARAMETERS
     var p1Width = 20;
     var p1Height = 100;
-    var P1color = 'white';
+    var playerColor = 'white';
 
     // START POSITION
     var p1StartPositionX = 20;
     var p1StartPositionY = canvas.height/2-p1Height/2;
 
+    var computerStartPositionX = canvas.width - 20 - p1Width;
+    var computerStartPositionY = canvas.height/2-p1Height/2;
+
     // DRAW PLAYER
     function basePlayer(){
-        ctx.fillStyle = P1color;
+        ctx.fillStyle = playerColor;
         ctx.fillRect(0, 0, p1Width, p1Height);
         player = ctx.getImageData(0, 0, p1Width, p1Height);
         void ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -81,6 +88,7 @@ function init(){
 
     // CREATE PLAYER
     containerArr.push(new Player(p1StartPositionX,p1StartPositionY));
+    containerArr.push(new Computer(computerStartPositionX,computerStartPositionY));
 
     // PLAYER OBJECT
     function Player(x, y){
@@ -100,16 +108,6 @@ function init(){
             ctx.stroke();
         };
 
-        // this.update = function(direction, position){
-        //     void ctx.clearRect(0, 0, canvas.width, canvas.height);
-        //     if(direction == 'up'){
-        //         this.y += 10;
-        //     }else if (direction == 'down'){
-        //         this.y -= 10;
-        //     }
-        //     this.drawPlayer();
-        // }
-
         // // FOR MOUSE CONTROLS
         this.update = function(){
             void ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -124,17 +122,37 @@ function init(){
         }
     }
 
-    // PLAYER MOVEMENT CONTROL WITH ARROWS
-    // document.addEventListener('keydown', function(event){
-    //     let direction;
-    //     if(event.key == 'ArrowUp'){
-    //         direction = 'up';
-    //         containerArr[0].update(direction);
-    //     }else if(event.key == 'ArrowDown'){
-    //         direction = 'down';
-    //         containerArr[0].update(direction);
-    //     }
-    // });
+    function Computer(x, y){
+
+        this.x = x;
+        this.y = y;
+        let computerSpeed = 9;
+
+        this.drawComputer = function(){
+            ctx.putImageData(player, this.x, this.y);
+
+            ctx.beginPath();
+            ctx.strokeStyle = 'white';
+            ctx.setLineDash([20,15]);
+            ctx.lineWidth = 5;
+            ctx.moveTo(canvas.width/2, 0);
+            ctx.lineTo(canvas.width/2, canvas.height);
+            ctx.stroke();
+        };
+
+        // // FOR MOUSE CONTROLS
+        this.update = function(){
+
+            if(ballNewY < this.y){
+                this.y -= computerSpeed;
+            }else{
+                this.y += computerSpeed;
+            }
+
+
+            this.drawComputer();
+        }
+    }
 
     // BALL PARAMETERS
     // PARAMETERS
@@ -178,10 +196,12 @@ function init(){
                 p1Score.innerHTML = p1Result;
 
                 // CHANGE RADIUS
-                radius += 10;
+                // radius += 10;
 
                 // ADD GAME RESET ON SCORE
             }else if(this.x - radius <= containerArr[0].x + p1Width && containerArr[0].y <= this.y + radius && containerArr[0].y + p1Height >= this.y - radius){
+                dx = -dx;
+            }else if(this.x - radius >= containerArr[1].x  && containerArr[1].y <= this.y + radius && containerArr[1].y + p1Height >= this.y - radius){
                 dx = -dx;
             }
 
@@ -193,6 +213,7 @@ function init(){
                 dy = -dy;
             };
             this.y += dy;
+            ballNewY = this.y;
 
             this.drawBall();
         }

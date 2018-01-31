@@ -24,6 +24,10 @@ body{
     display: none;
 }
 
+.d-cursor-none{
+    cursor: none;
+}
+
 .container{
     width: 90%;
     height: 90%;
@@ -74,9 +78,15 @@ canvas{
     padding: 10px;
     font-size: 30px;
     text-align: center;
-    color: white;
+    color: #a8a8a8;
     font-weight: bolder;
-    border: 2px solid white;
+    border: 2px solid #a8a8a8;
     border-radius: 5px;
     cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn:hover{
+    color: white;
+    border: 2px solid white;
 }
