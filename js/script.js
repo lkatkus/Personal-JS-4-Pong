@@ -6,33 +6,43 @@ function init(){
     var canvas = document.getElementById("canvas");
     var ctx = canvas.getContext("2d");
 
+    // ANIMATION REQUEST
+    var myAnimationRequest;
+
     // SETTING CANVAS SIZE
     canvas.width = container.offsetWidth;
     canvas.height = container.offsetHeight;
 
-    // SPRITES PLACEHOLDER
+    // SPRITE PLACEHOLDER
     var containerArr = [];
-
-
     var player = new Image();
 
-    // DRAW RECTANGLE
-    function drawRectangle(){
-        ctx.fillStyle = "black";
-        ctx.fillRect(0, 0, 10, 100);
-        player = ctx.getImageData(0, 0, 10, 100);
+    // PLAYER VARIABLES
+    // PARAMETERS
+    var P1width = 10;
+    var P1height = 100;
+    var P1color = 'black';
+
+    // START POSITION
+    var P1startPositionX = 20;
+    var P1startPositionY = canvas.height/2-50;
+
+    // DRAW PLAYER
+    function basePlayer(){
+        ctx.fillStyle = P1color;
+        ctx.fillRect(0, 0, P1width, P1height);
+        player = ctx.getImageData(0, 0, P1width, P1height);
         void ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
+    basePlayer();
+    containerArr.push(new Player(P1startPositionX,P1startPositionY));
 
-    drawRectangle();
-
-    containerArr.push(new Rec(50,(canvas.height/2-50)));
-
-    function Rec(x,y){
+    // PLAYER OBJECT
+    function Player(x,y){
         this.x = x;
         this.y = y;
 
-        this.drawRec = function(){
+        this.drawPlayer = function(){
             ctx.putImageData(player, this.x, this.y);
         };
 
@@ -43,7 +53,7 @@ function init(){
             }else if (direction == 'down'){
                 this.y += 40;
             }
-            this.drawRec();
+            this.drawPlayer();
         }
     }
 
@@ -89,6 +99,7 @@ function init(){
                 console.log("REBOUND");
                 dx = -dx;
             }
+
             this.x += dx;
 
             if(this.y > canvas.height){
@@ -103,23 +114,23 @@ function init(){
     }
 
     function animate(){
-        var myAnimationRequest = requestAnimationFrame(animate);
-        //
-        // function stopAnim(){
-        //     console.log("stop");
-        //     // cancelAnimationFrame(myAnimationRequest);
-        // }
-        //
-        // canvas.addEventListener('click',stopAnim);
+        myAnimationRequest = requestAnimationFrame(animate);
 
-        // LOOP FOR UPDATING CIRCLE POSITION
+        // LOOP FOR UPDATING POSITION
         for(var i = 0; i < containerArr.length; i++){
-            // containerArr[0].update();
             containerArr[i].update();
         };
     }
 
+    function stopAnim(){
+        if(!myAnimationRequest){
+            animate();
+        }else{
+            console.log('animation request id' + myAnimationRequest);
+            cancelAnimationFrame(myAnimationRequest);
+        }
+    }
 
-    animate();
+    canvas.addEventListener('click',stopAnim);
 
 }
