@@ -6,8 +6,10 @@ function init(){
     var ctx = canvas.getContext("2d");
 
     // SCORE KEEPING
-    var p1Score = 0;
-    var p2Score = 0;
+    var p1Score = document.querySelector("#p1Score");
+    var p2Score = document.querySelector("#p2Score");
+    var p1Result = 0;
+    var p2Result = 0;
 
     // BUTTONS
     var btnStart = document.querySelector('#btn-start');
@@ -20,14 +22,15 @@ function init(){
         startGame('reset');
     });
 
-
     // ANIMATION REQUEST
     var myAnimationRequest;
 
     function startGame(state){
         if(state == 'start'){
             btnStart.classList.add('d-none');
-            btnReset.classList.remove('d-none');
+            // btnReset.classList.remove('d-none');
+            p1Score.classList.remove('d-none');
+            p2Score.classList.remove('d-none');
             animate();
         }else{
             btnReset.classList.add('d-none');
@@ -41,11 +44,16 @@ function init(){
     canvas.height = container.offsetHeight;
 
     // CANVAS ON RESIZE
-
     window.addEventListener('resize',function(){
         console.log('resize');
         canvas.width = container.offsetWidth;
         canvas.height = container.offsetHeight;
+    });
+
+    // ADDING MOUSE CONTROLS
+    var mouseNewY; /*MOUSE POSITION TRACKER */
+    canvas.addEventListener('mousemove',function(event){
+        mouseNewY = event.y - this.offsetTop;
     });
 
     // SPRITE PLACEHOLDER
@@ -54,56 +62,79 @@ function init(){
 
     // PLAYER VARIABLES
     // PARAMETERS
-    var P1width = 10;
-    var P1height = 100;
-    var P1color = 'black';
+    var p1Width = 20;
+    var p1Height = 100;
+    var P1color = 'white';
 
     // START POSITION
-    var P1startPositionX = 20;
-    var P1startPositionY = canvas.height/2-50;
+    var p1StartPositionX = 20;
+    var p1StartPositionY = canvas.height/2-p1Height/2;
 
     // DRAW PLAYER
     function basePlayer(){
         ctx.fillStyle = P1color;
-        ctx.fillRect(0, 0, P1width, P1height);
-        player = ctx.getImageData(0, 0, P1width, P1height);
+        ctx.fillRect(0, 0, p1Width, p1Height);
+        player = ctx.getImageData(0, 0, p1Width, p1Height);
         void ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
     basePlayer();
-    containerArr.push(new Player(P1startPositionX,P1startPositionY));
+
+    // CREATE PLAYER
+    containerArr.push(new Player(p1StartPositionX,p1StartPositionY));
 
     // PLAYER OBJECT
-    function Player(x,y){
+    function Player(x, y){
+
         this.x = x;
         this.y = y;
 
         this.drawPlayer = function(){
             ctx.putImageData(player, this.x, this.y);
+
+            ctx.beginPath();
+            ctx.strokeStyle = 'white';
+            ctx.setLineDash([20,15]);
+            ctx.lineWidth = 5;
+            ctx.moveTo(canvas.width/2, 0);
+            ctx.lineTo(canvas.width/2, canvas.height);
+            ctx.stroke();
         };
 
-        this.update = function(direction){
+        // this.update = function(direction, position){
+        //     void ctx.clearRect(0, 0, canvas.width, canvas.height);
+        //     if(direction == 'up'){
+        //         this.y += 10;
+        //     }else if (direction == 'down'){
+        //         this.y -= 10;
+        //     }
+        //     this.drawPlayer();
+        // }
+
+        // // FOR MOUSE CONTROLS
+        this.update = function(){
             void ctx.clearRect(0, 0, canvas.width, canvas.height);
-            if(direction == 'up'){
-                this.y -= 40;
-            }else if (direction == 'down'){
-                this.y += 40;
+            if(mouseNewY - p1Height/2 < 0){
+                this.y = 0;
+            }else if(mouseNewY > canvas.height - p1Height/2){
+                this.y = canvas.height - p1Height;
+            }else{
+                this.y = mouseNewY - p1Height/2;
             }
             this.drawPlayer();
         }
     }
 
-    // PLAYER MOVEMENT CONTROL
-    document.addEventListener('keydown', function(event){
-        let direction;
-        if(event.key == 'ArrowUp'){
-            direction = 'up';
-            containerArr[0].update(direction);
-        }else if(event.key == 'ArrowDown'){
-            direction = 'down';
-            containerArr[0].update(direction);
-        }
-    });
-
+    // PLAYER MOVEMENT CONTROL WITH ARROWS
+    // document.addEventListener('keydown', function(event){
+    //     let direction;
+    //     if(event.key == 'ArrowUp'){
+    //         direction = 'up';
+    //         containerArr[0].update(direction);
+    //     }else if(event.key == 'ArrowDown'){
+    //         direction = 'down';
+    //         containerArr[0].update(direction);
+    //     }
+    // });
 
     // BALL PARAMETERS
     // PARAMETERS
@@ -119,7 +150,7 @@ function init(){
 
     function Ball(x, y, color){
 
-        let radius = 10;
+        radius = ballSize;
         this.x = x;
         this.y = y;
         let dx = 10;
@@ -134,16 +165,23 @@ function init(){
         }
 
         this.update = function(){
-
-            if(this.x > canvas.width){
+            if(this.x + radius >= canvas.width){
                 dx = -dx;
+                p2Result += 1;
+                p2Score.innerHTML = p2Result;
             }else if(this.x < 0){
+                // CHANGE BALL DIRECTION
                 dx = -dx;
-                p1Score += 1;
+
+                // ADD PLAYER SCORE
+                p1Result += 1;
+                p1Score.innerHTML = p1Result;
+
+                // CHANGE RADIUS
                 radius += 10;
-                document.querySelector("#p1Score").innerHTML = p1Score;
-            }else if(this.x <= containerArr[0].x+10 && containerArr[0].y <= this.y && containerArr[0].y+100 >= this.y){
-                console.log("REBOUND");
+
+                // ADD GAME RESET ON SCORE
+            }else if(this.x - radius <= containerArr[0].x + p1Width && containerArr[0].y <= this.y + radius && containerArr[0].y + p1Height >= this.y - radius){
                 dx = -dx;
             }
 
