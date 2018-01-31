@@ -17,6 +17,11 @@ body{
     justify-content: center;
 }
 
+.d-none{
+    display: none;
+}
+
+
 .container{
     width: 90%;
     height: 90%;
@@ -39,4 +44,29 @@ h2{
     left: 50px;
     top: 25px;
     margin: 0;
+}
+
+
+/*BUTTONS*/
+.btn-container{
+    /*POSITIONING*/
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%;-50%);
+}
+
+.btn{
+    /*STYLING*/
+    padding: 10px;
+    text-align: center;
+    color: white;
+    font-weight: bold;
+    border: 1px solid white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btn + .btn{
+    margin-top: 10px;
 }

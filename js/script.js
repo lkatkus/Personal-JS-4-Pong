@@ -1,17 +1,52 @@
 function init(){
 
-    // SELECTORS
+    // CANVAS SELECTORS
     var container = document.querySelector(".container");
-    var p1Score = 0;
     var canvas = document.getElementById("canvas");
     var ctx = canvas.getContext("2d");
+
+    // SCORE KEEPING
+    var p1Score = 0;
+    var p2Score = 0;
+
+    // BUTTONS
+    var btnStart = document.querySelector('#btn-start');
+    btnStart.addEventListener('click',function(){
+        startGame('start');
+    });
+
+    var btnReset = document.querySelector('#btn-reset');
+    btnReset.addEventListener('click',function(){
+        startGame('reset');
+    });
+
 
     // ANIMATION REQUEST
     var myAnimationRequest;
 
-    // SETTING CANVAS SIZE
+    function startGame(state){
+        if(state == 'start'){
+            btnStart.classList.add('d-none');
+            btnReset.classList.remove('d-none');
+            animate();
+        }else{
+            btnReset.classList.add('d-none');
+            btnStart.classList.remove('d-none');
+            cancelAnimationFrame(myAnimationRequest);
+        }
+    };
+
+    // SETTING STARTING CANVAS SIZE
     canvas.width = container.offsetWidth;
     canvas.height = container.offsetHeight;
+
+    // CANVAS ON RESIZE
+
+    window.addEventListener('resize',function(){
+        console.log('resize');
+        canvas.width = container.offsetWidth;
+        canvas.height = container.offsetHeight;
+    });
 
     // SPRITE PLACEHOLDER
     var containerArr = [];
@@ -69,11 +104,22 @@ function init(){
         }
     });
 
+
+    // BALL PARAMETERS
+    // PARAMETERS
+    var ballSize = 10;
+    var ballColor = 'black';
+
+    // START POSITION
+    var ballPositionX = canvas.width/2;
+    var ballPositionY = canvas.height/2;
+
     // CREATE BALL
-    containerArr.push(new Ball(canvas.width/2,canvas.height/2,10));
+    containerArr.push(new Ball(ballPositionX, ballPositionY, ballSize, ballColor));
 
-    function Ball(x,y){
+    function Ball(x, y, color){
 
+        let radius = 10;
         this.x = x;
         this.y = y;
         let dx = 10;
@@ -81,9 +127,9 @@ function init(){
 
         this.drawBall = function(){
             ctx.beginPath();
-            ctx.strokeStyle = "blue";
-            ctx.arc(this.x, this.y, 10, 0, Math.PI*2, true);
-            ctx.fillStyle = "blue";
+            // ctx.strokeStyle = "blue";
+            ctx.arc(this.x, this.y, radius, 0, Math.PI*2, true);
+            ctx.fillStyle = color;
             ctx.fill();
         }
 
@@ -94,6 +140,7 @@ function init(){
             }else if(this.x < 0){
                 dx = -dx;
                 p1Score += 1;
+                radius += 10;
                 document.querySelector("#p1Score").innerHTML = p1Score;
             }else if(this.x <= containerArr[0].x+10 && containerArr[0].y <= this.y && containerArr[0].y+100 >= this.y){
                 console.log("REBOUND");
@@ -120,17 +167,6 @@ function init(){
         for(var i = 0; i < containerArr.length; i++){
             containerArr[i].update();
         };
-    }
-
-    function stopAnim(){
-        if(!myAnimationRequest){
-            animate();
-        }else{
-            console.log('animation request id' + myAnimationRequest);
-            cancelAnimationFrame(myAnimationRequest);
-        }
-    }
-
-    canvas.addEventListener('click',stopAnim);
+    };
 
 }
