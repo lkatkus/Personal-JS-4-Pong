@@ -46,7 +46,6 @@ canvas{
     -webkit-box-shadow: inset 0px 0px 80px 20px rgba(0,0,0,0.2);
     -moz-box-shadow: inset 0px 0px 80px 20px rgba(0,0,0,0.2);
     box-shadow: inset 0px 0px 80px 20px rgba(0,0,0,0.2);
-
 }
 
 .score{
@@ -56,14 +55,24 @@ canvas{
     top: 25px;
 }
 
+#title{
+    color: #a8a8a8;
+    margin: 10px;
+    font-size: 60px;
+}
+
 #p1Score{
     position: absolute;
     left: 40%;
+    user-select: none;
+    cursor: none;
 }
 
 #p2Score{
     position: absolute;
     right: 40%;
+    user-select: none;
+    cursor: none;
 }
 
 /*BUTTONS*/
@@ -73,11 +82,12 @@ canvas{
     left: 50%;
     top: 50%;
     transform: translate(-50%,-50%);
+    text-align: center;
 }
 
 .btn{
     /*STYLING*/
-    padding: 10px;
+    padding: 5px;
     font-size: 30px;
     text-align: center;
     color: #a8a8a8;

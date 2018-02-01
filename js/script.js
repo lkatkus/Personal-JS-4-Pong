@@ -5,14 +5,19 @@ function init(){
     var canvas = document.getElementById("canvas");
     var ctx = canvas.getContext("2d");
 
+    // SETTING STARTING CANVAS SIZE
+    canvas.width = container.offsetWidth;
+    canvas.height = container.offsetHeight;
+
     // SCORE KEEPING
     var p1Score = document.querySelector("#p1Score");
     var p2Score = document.querySelector("#p2Score");
     var p1Result = 0;
     var p2Result = 0;
 
-    // BUTTONS
+    // START AND RESET BUTTON SELECTORS
     var btnStart = document.querySelector('#btn-start');
+    var title = document.querySelector('#title');
     btnStart.addEventListener('click',function(){
         startGame('start');
     });
@@ -25,13 +30,15 @@ function init(){
     // ANIMATION REQUEST
     var myAnimationRequest;
 
+    // MAIN FUNCTION FOR STARTING GAME
     function startGame(state){
         if(state == 'start'){
             btnStart.classList.add('d-none');
+            title.classList.add('d-none');
             canvas.classList.add('d-cursor-none');
-            // btnReset.classList.remove('d-none');
             p1Score.classList.remove('d-none');
             p2Score.classList.remove('d-none');
+            // btnReset.classList.remove('d-none');
             animate();
         }else{
             btnReset.classList.add('d-none');
@@ -40,13 +47,8 @@ function init(){
         }
     };
 
-    // SETTING STARTING CANVAS SIZE
-    canvas.width = container.offsetWidth;
-    canvas.height = container.offsetHeight;
-
-    // CANVAS ON RESIZE
+    // CANVAS ON RESIZE EVENT
     window.addEventListener('resize',function(){
-        console.log('resize');
         canvas.width = container.offsetWidth;
         canvas.height = container.offsetHeight;
     });
@@ -57,8 +59,9 @@ function init(){
         mouseNewY = event.y - this.offsetTop;
     });
 
+    // FOR COMPUTER PLAYER
     var ballNewY;
-    var ballDirection = 'right';
+    var ballDirection = 'right'; /*DEFAULT VALUE */
 
     // SPRITE PLACEHOLDER
     var containerArr = [];
@@ -115,29 +118,35 @@ function init(){
         }
     }
 
+    // COMPUTER OBJECT
     function Computer(x, y){
 
         this.x = x;
         this.y = y;
-        let computerSpeed = 9;
+        let computerSpeed = 10;
 
         this.drawComputer = function(){
             ctx.putImageData(player, this.x, this.y);
 
+            // DRAWING FIELD MIDDLE LINE
             ctx.beginPath();
             ctx.strokeStyle = 'white';
             ctx.setLineDash([20,10]);
             ctx.lineWidth = 5;
-            ctx.moveTo(canvas.width/2, 10);
-            ctx.lineTo(canvas.width/2, canvas.height-10);
+            ctx.moveTo(canvas.width/2, 20);
+            ctx.lineTo(canvas.width/2, canvas.height-20);
             ctx.stroke();
         };
 
         this.update = function(){
-            if(ballNewY < this.y  && ballDirection == 'right'){
+            if(ballNewY < this.y && ballDirection == 'right' && this.y > 0){
                 this.y -= computerSpeed;
-            }else if(ballNewY > this.y && ballDirection == 'right'){
+            }else if(ballNewY > this.y && ballDirection == 'right' && this.y < canvas.height-p1Height){
                 this.y += computerSpeed;
+            }else if(ballDirection == 'left' && ballNewY > this.y && this.y < canvas.height-p1Height){
+                this.y += 1;
+            }else if(ballDirection == 'left' && ballNewY < this.y && this.y > 0){
+                this.y -= 1;
             }
             this.drawComputer();
         }
@@ -146,7 +155,7 @@ function init(){
     // BALL PARAMETERS
     // PARAMETERS
     var ballSize = 10;
-    var ballColor = 'black';
+    var ballColor = 'white';
 
     // START POSITION
     var ballPositionX = canvas.width/2;
@@ -160,49 +169,68 @@ function init(){
         radius = ballSize;
         this.x = x;
         this.y = y;
-        let dx = 10;
-        let dy = 10;
+        let dx = 11;
+        let dy = 11;
 
         this.drawBall = function(){
             ctx.beginPath();
-            // ctx.strokeStyle = "blue";
-            ctx.arc(this.x, this.y, radius, 0, Math.PI*2, true);
             ctx.fillStyle = color;
+            ctx.arc(this.x, this.y, radius, 0, Math.PI*2, true);
             ctx.fill();
         }
 
         this.update = function(){
+
+            // RIGHT SIDE COLISION DETECTION AND SCORING
             if(this.x + radius >= canvas.width){
                 dx = -dx;
                 p2Result += 1;
                 ballDirection = 'left';
                 p2Score.innerHTML = p2Result;
-            }else if(this.x < 0){
-                // CHANGE BALL DIRECTION
-                dx = -dx;
 
-                // ADD PLAYER SCORE
+            // LEFT SIDE COLLISION DETECTION AND SCORING
+            }else if(this.x < 0){
+                dx = -dx;
                 p1Result += 1;
                 ballDirection = 'right';
                 p1Score.innerHTML = p1Result;
 
-                // ADD GAME RESET ON SCORE
-            }else if(this.x - radius <= containerArr[0].x + p1Width && containerArr[0].y <= this.y + radius && containerArr[0].y + p1Height >= this.y - radius){
+                // ADD GAME RESET ON SCORE !
+
+            // REBOUND LEFT
+            }else if(this.x - radius <= containerArr[0].x + p1Width && containerArr[0].y <= this.y + radius && containerArr[0].y + p1Height >= this.y - radius && ballDirection == 'left'){
                 dx = -dx;
                 ballDirection = 'right';
-            }else if(this.x - radius >= containerArr[1].x  && containerArr[1].y <= this.y + radius && containerArr[1].y + p1Height >= this.y - radius){
+
+            // REBOUND RIGHT
+            }else if(this.x + radius >= containerArr[1].x  && containerArr[1].y <= this.y + radius && containerArr[1].y + p1Height >= this.y - radius && ballDirection == 'right'){
                 dx = -dx;
                 ballDirection = 'left';
             }
 
-            this.x += dx;
-
-            if(this.y > canvas.height){
+            // VERTICAL BALL MOVEMENT
+            if(this.y + radius > canvas.height){
                 dy = -dy;
-            }else if(this.y < 0){
+            }else if(this.y - radius < 0){
                 dy = -dy;
             };
+
+            // COLOR SCORING INDICATOR
+            if(ballDirection == 'right' && this.x < 40){
+                color = 'coral';
+            }else if(ballDirection == 'right' && this.x > 40){
+                color = 'white';
+            }else if(ballDirection == 'left' && this.x > canvas.width - 40){
+                color = 'coral';
+            }else if(ballDirection == 'left' && this.x > 40){
+                color = 'white';
+            }
+
+            // UPDATING BALL POSITION
+            this.x += dx;
             this.y += dy;
+
+            // BALLPOSITION PLACEHOLDER FOR COMPUTER
             ballNewY = this.y;
 
             this.drawBall();
