@@ -74,6 +74,9 @@ function init(){
     var p1Height = 100;
     var playerColor = 'white';
 
+    var playerLeftCenter;
+    var playerRightCenter;
+
     // START POSITION
     var p1StartPositionX = 20;
     var p1StartPositionY = canvas.height/2-p1Height/2;
@@ -172,6 +175,7 @@ function init(){
         let dx = 11;
         let dy = 11;
 
+
         this.drawBall = function(){
             ctx.beginPath();
             ctx.fillStyle = color;
@@ -180,6 +184,8 @@ function init(){
         }
 
         this.update = function(){
+            playerLeftCenter = containerArr[0].y + p1Height/2;
+            playerRightCenter = containerArr[1].y + p1Height/2;
 
             // RIGHT SIDE COLISION DETECTION AND SCORING
             if(this.x + radius >= canvas.width){
@@ -201,11 +207,13 @@ function init(){
             }else if(this.x - radius <= containerArr[0].x + p1Width && containerArr[0].y <= this.y + radius && containerArr[0].y + p1Height >= this.y - radius && ballDirection == 'left'){
                 dx = -dx;
                 ballDirection = 'right';
+                dy = -((playerLeftCenter-this.y)*0.2);
 
             // REBOUND RIGHT
             }else if(this.x + radius >= containerArr[1].x  && containerArr[1].y <= this.y + radius && containerArr[1].y + p1Height >= this.y - radius && ballDirection == 'right'){
                 dx = -dx;
                 ballDirection = 'left';
+                // dy = -((playerLeftCenter-this.y)*0.2);
             }
 
             // VERTICAL BALL MOVEMENT
